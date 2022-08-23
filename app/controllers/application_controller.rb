@@ -9,6 +9,45 @@ class ApplicationController < Sinatra::Base
   get '/categories' do
     category = Category.all
     category.to_json
-end
+  end
+
+  post '/categories' do 
+    category = Category.new(
+      name: params[:name]
+    )
+    # now run it through validations - if it saves 
+    if category.save
+      category.to_json
+    else
+      { errors: category.errors.full_messages }.to_json
+    end
+  end
+
+  # post '/categories' do 
+  #   category = Category.create(
+  #     name: params[:name]
+  #   )
+  #   category.to_json
+  # end
+
+
+  get '/todos' do 
+    @todos = Todo.all
+    #going to grab the todos and their categories and parse to json
+    @todos.to_json(include: [:category])
+  end
+
+  post "/todos" do 
+     todo = Todo.new(
+       title: params[:title],
+       description: params[:description],
+       category_id: params[:category_id]
+     )
+     if todo.save
+       todo.to_json
+     else
+       { errors: todo.errors.full_messages }.to_json
+     end
+  end
 
 end

@@ -12,7 +12,4 @@ end
 use Rack::JSONBodyParser
 
 # Our application
-
-use TodosController
-use CategoriesController
 run ApplicationController
