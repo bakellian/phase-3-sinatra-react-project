@@ -11,8 +11,10 @@ class ApplicationController < Sinatra::Base
     category.to_json
   end
 
+  ## Error handling post request:
+
   post '/categories' do 
-    category = Category.new(
+    category = Category.create(
       name: params[:name]
     )
     # now run it through validations - if it saves 
@@ -22,14 +24,6 @@ class ApplicationController < Sinatra::Base
       { errors: category.errors.full_messages }.to_json
     end
   end
-
-  # post '/categories' do 
-  #   category = Category.create(
-  #     name: params[:name]
-  #   )
-  #   category.to_json
-  # end
-
 
   get '/todos' do 
     @todos = Todo.all
@@ -44,7 +38,7 @@ class ApplicationController < Sinatra::Base
        category_id: params[:category_id]
      )
      if todo.save
-       todo.to_json
+       todo.to_json(include: [:category])
      else
        { errors: todo.errors.full_messages }.to_json
      end
