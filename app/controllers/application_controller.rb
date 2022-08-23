@@ -44,4 +44,27 @@ class ApplicationController < Sinatra::Base
      end
   end
 
+  #### stretch goal
+  # patch "/todos:id/" do 
+  #   todo = Todo.find_by_id(prams[:id])
+  #   if todo && todo.update(params[:todo])
+  #     #add category to it
+  #     params[:categories].each do |category|
+  #     todo.to_json(include: [:category])
+  #   else
+  #     { errors: todo.errors.full_messages }.to_json
+  #   end
+  # end
+
+  delete "/todos/:id" do 
+    todo = Todo.find_by_id(params[:id])
+    if todo
+      todo.destroy
+      #send back to front end so we can find it in front end and delete it to match backend
+      todo.to_json(include: [:category])
+    else 
+      { errors: ["Todo does not exist"] }.to_json
+    end 
+  end
+
 end
