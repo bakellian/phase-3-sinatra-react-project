@@ -1,14 +1,9 @@
 class ApplicationController < Sinatra::Base
   set :default_content_type, 'application/json'
-  
-  # Add your routes here
-  get "/" do
-    { message: "Good luck with your project!" }.to_json
-  end
 
   get '/categories' do
     category = Category.all
-    category.to_json
+    category.to_json(include: [:todos])
   end
 
   ## Error handling post request:
@@ -31,11 +26,12 @@ class ApplicationController < Sinatra::Base
     @todos.to_json(include: [:category])
   end
 
-  post "/todos" do 
-     todo = Todo.new(
+  post "/categories/:category_id/todos" do 
+    category = Category.find_by_id(params[:category_id])
+    #makes new todo in this category w/o saving (rtrns association obj)
+     todo = category.todos.build(
        title: params[:title],
        description: params[:description],
-       category_id: params[:category_id]
      )
      if todo.save
        todo.to_json(include: [:category])
@@ -44,17 +40,18 @@ class ApplicationController < Sinatra::Base
      end
   end
 
-  #### stretch goal
-  # patch "/todos:id/" do 
-  #   todo = Todo.find_by_id(prams[:id])
-  #   if todo && todo.update(params[:todo])
-  #     #add category to it
-  #     params[:categories].each do |category|
-  #     todo.to_json(include: [:category])
-  #   else
-  #     { errors: todo.errors.full_messages }.to_json
-  #   end
-  # end
+  # need to create an update 
+  patch '/todos/:id/edit' do #reqiest from front end needs to match what we have in the route 
+    #1. find donation to update
+    todo = Todo.find(params[:id])
+    #call method .update and pass in the parameters being updated 
+    todo.update({
+        title: params[:title],
+        description: params[:description]
+    })
+    todo.to_json
+  end
+
 
   delete "/todos/:id" do 
     todo = Todo.find_by_id(params[:id])
