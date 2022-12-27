@@ -3,15 +3,13 @@ class ApplicationController < Sinatra::Base
 
   get '/categories' do
     category = Category.all
-    category.to_json(include: [:todos])
+    category.to_json(include: [:todos])   
   end
 
   ## Error handling post request:
 
   post '/categories' do 
-    category = Category.create(
-      name: params[:name]
-    )
+    category = Category.create(params[:name])
     # now run it through validations - if it saves 
     if category.save
       category.to_json
@@ -22,17 +20,13 @@ class ApplicationController < Sinatra::Base
 
   get '/todos' do 
     @todos = Todo.all
-    #going to grab the todos and their categories and parse to json
     @todos.to_json(include: [:category])
   end
 
   post "/categories/:category_id/todos" do 
     category = Category.find_by_id(params[:category_id])
     #makes new todo in this category w/o saving (rtrns association obj)
-     todo = category.todos.build(
-       title: params[:title],
-       description: params[:description],
-     )
+    todo = category.todos.build(params[:toDoData])
      if todo.save
        todo.to_json(include: [:category])
      else
