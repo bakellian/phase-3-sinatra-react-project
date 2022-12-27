@@ -7,6 +7,7 @@ class ApplicationController < Sinatra::Base
   end
 
   ## Error handling post request:
+  
 
   post '/categories' do 
     category = Category.create(params[:name])
